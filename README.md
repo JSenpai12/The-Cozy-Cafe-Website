@@ -14,20 +14,65 @@ A simple and cozy landing page for a fictional café. Built with HTML, CSS, and 
 
 ---
 
+## 🔐 Email Setup (Gmail)
+
+If you want the contact form to send emails, you must configure Gmail properly.
+
+### **1. Enable 2-Step Verification**
+
+1. Go to your Google Account.
+2. Open **Security** → **2-Step Verification**.
+3. Turn it on.
+
+### **2. Create an App Password**
+
+1. After enabling 2-Step Verification, go to **Security** → **App Passwords**.
+2. Choose **Mail** as the app.
+3. Choose your device (or select “Other”).
+4. Google will generate a **16-character App Password**.
+5. Copy it — this will replace your normal Gmail password in the code.
+
+### **3. Create Environment Variables**
+
+Create two environment variables on your PC:
+
+* `EMAIL_ADDRESS` — your Gmail address
+* `EMAIL_PASSWORD` — the **app password** (not your real Gmail password)
+
+#### **Windows (PowerShell)**
+
+```bash
+setx EMAIL_ADDRESS "your_email@gmail.com"
+setx EMAIL_PASSWORD "your_app_password"
+```
+
+#### **Mac / Linux**
+
+```bash
+export EMAIL_ADDRESS="your_email@gmail.com"
+export EMAIL_PASSWORD="your_app_password"
+```
+
+Your Flask code will securely access them using:
+
+```python
+os.getenv("EMAIL_ADDRESS")
+os.getenv("EMAIL_PASSWORD")
+```
+
+---
+
+
 ## 🛠️ Tech Stack
 
 If this is a static site:
 
 * **HTML5**
-* **CSS3** (Flexbox / Grid)
-* **JavaScript** (optional)
-
-If this is a Flask project:
-
+* **CSS3** 
+* **JavaScript** 
 * **Flask**
 * **Python 3.x**
-* **Jinja templates**
-* **Bootstrap / Custom CSS** (if used)
+* **Bootstrap / Custom CSS** 
 
 ---
 
@@ -60,17 +105,6 @@ If this is a Flask project:
 
 ---
 
-## ⚙️ Configuration (If using Flask)
-
-* Add your email credentials (if your contact form sends email) using environment variables:
-
-  ```
-  EMAIL_ADDRESS=your_email@gmail.com
-  PASSWORD=your_app_password
-  ```
-* Update any café details inside `config.py` or directly in templates.
-
----
 
 ## 📂 Project Structure (Example)
 
