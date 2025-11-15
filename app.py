@@ -67,6 +67,8 @@ class EmailSender:
         
         print("Email Sent")
     
+coffee = CoffeePage()      # create CoffeePage object
+app = coffee.app           # expose Flask app as "app"
+
 if __name__ == "__main__":
-    app = CoffeePage()
     app.run()
