@@ -7,13 +7,12 @@ import os
 class CoffeePage:
     def __init__(self):
         self.app = Flask(__name__)
-        self.email_sender = EmailSender(os.getenv("EMAIL_ADDRESS"), os.getenv("PASSWORD"))
+        self.email_sender = EmailSender()   # no args needed anymore
         self.setup_routes()
         
-    
     def setup_routes(self):
         self.app.add_url_rule('/', 'home', self.home)
-        self.app.add_url_rule('/contact','contact', self.contact ,methods=['GET', 'POST'])
+        self.app.add_url_rule('/contact', 'contact', self.contact, methods=['GET', 'POST'])
     
     def home(self):
         return render_template('index.html')
@@ -26,20 +25,21 @@ class CoffeePage:
             message = request.form.get('message')
 
             self.email_sender.send(name, email, phone, message)
+
             print(f"Name: {name} email: {email} phone: {phone} message: {message}")
             return '', 200
 
-
         return 'Method not allowed', 405
-    
-    def run(self):
-        self.app.run(debug=True)
 
 
 class EmailSender:
-    def __init__(self, email_sender, sender_password):
-        self.email_sender = email_sender
-        self.sender_password = sender_password
+    def __init__(self):
+        # Read all values from Render environment variables
+        self.host = os.getenv("MAIL_HOST")
+        self.port = int(os.getenv("MAIL_PORT"))
+        self.username = os.getenv("MAIL_USERNAME")
+        self.password = os.getenv("MAIL_PASSWORD")
+        self.to_email = os.getenv("MAIL_TO")
 
     def send(self, name, email, phone, message):
         body = f"""
@@ -48,27 +48,27 @@ class EmailSender:
         Name: {name}
         Email: {email}
         Phone: {phone}
-        
+
         Message:
         {message}
         """
-    
+        
         msg = MIMEText(body)
         msg['Subject'] = f"New Message from {name}"
-        msg['From'] = self.email_sender
-        msg['To'] = self.email_sender
+        msg['From'] = self.username
+        msg['To'] = self.to_email
         msg['Reply-To'] = email
 
-        with smtplib.SMTP('smtp.gmail.com', 587) as server:
-            server.set_debuglevel(1)
+        with smtplib.SMTP(self.host, self.port) as server:
             server.starttls()
-            server.login(self.email_sender, self.sender_password)
+            server.login(self.username, self.password)
             server.send_message(msg)
-        
-        print("Email Sent")
-    
-coffee = CoffeePage()      # create CoffeePage object
-app = coffee.app           # expose Flask app as "app"
 
-if __name__ == "__main__":
-    app.run()
+        print("Email Sent")
+
+
+# Expose Flask app to Render
+coffee = CoffeePage()
+app = coffee.app
+
+# Do NOT run app.run() in production
